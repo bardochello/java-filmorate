@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.utils.ValidationUtils;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -15,8 +16,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final Map<Long, Film> films = new HashMap<>(); // Хранилище фильмов в памяти
-    private final Logger logger = LoggerFactory.getLogger(FilmController.class); // Логгер для класса
+    private static final Logger logger = LoggerFactory.getLogger(FilmController.class); // Логгер для класса
+    private static final int MAX_DESCRIPTION_LENGTH = 200;
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
+    private final Map<Long, Film> films = new HashMap<>();
+    // Хранилище фильмов в памяти
 
     // Получение всех фильмов
     @GetMapping
@@ -27,7 +32,7 @@ public class FilmController {
     // Создание фильма
     @PostMapping
     public Film create(@RequestBody Film film) {
-        validateFilm(film); // Валидация фильма
+        ValidationUtils.validateFilm(film); // Валидация фильма
         film.setId(nextId()); // Установка id
         films.put(film.getId(), film); // Сохранение фильма в хранилище
         logger.info("Создан фильм с id: {}", film.getId());
@@ -67,7 +72,7 @@ public class FilmController {
         }
 
         if (film.getDescription() != null) {
-            if (film.getDescription().length() > 200) {
+            if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
                 logger.error("Слишком длинное описание");
                 throw new ValidationException("Описание превышает 200 символов");
             }
@@ -76,8 +81,7 @@ public class FilmController {
         }
 
         if (film.getReleaseDate() != null) {
-            LocalDate minDate = LocalDate.of(1895, 12, 28);
-            if (film.getReleaseDate().isBefore(minDate)) {
+            if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
                 logger.error("Некорректная дата релиза");
                 throw new ValidationException("Дата релиза раньше 28 декабря 1895");
             }
@@ -113,36 +117,5 @@ public class FilmController {
                 .orElse(0);
 
         return ++currentMaxId;
-    }
-
-    //Валидация film
-    private void validateFilm(Film film) {
-        final int SYMBOLS = 200;
-        final LocalDate RELEASE_DATE = LocalDate.of(1895, 12, 28);
-
-        if (film == null) {
-            logger.error("Не передан film");
-            throw new ValidationException("Фильм не может быть равен null");
-        } else {
-            if (film.getName() == null || film.getName().isBlank()) {
-                logger.error("Название фильма пустое");
-                throw new ValidationException("Название фильма не может быть пустым!");
-            }
-
-            if (film.getDescription().length() > SYMBOLS) {
-                logger.error("Длинное описание фильма");
-                throw new ValidationException("Максимальная длина описания фильма " + SYMBOLS + " символов!");
-            }
-
-            if (film.getReleaseDate().isBefore(RELEASE_DATE)) {
-                logger.error("Дата выпуска раньше 28 декабря 1895 года");
-                throw new ValidationException("Дата выпуска должна быть не раньше 28 декабря 1895 года");
-            }
-
-            if (film.getDuration() < 0) {
-                logger.error("Продолжительность фильма меньше 0");
-                throw new ValidationException("Продолжительность фильма не должна быть меньше 0");
-            }
-        }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.utils.ValidationUtils;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class UserContoller {
     // Создание нового пользователя
     @PostMapping
     public User create(@RequestBody User user) {
-        validateUser(user); // Валидация пользователя
+        ValidationUtils.validateUser(user); // Валидация пользователя
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin()); // Установка имени, если оно пустое
         }
@@ -45,7 +46,7 @@ public class UserContoller {
             throw new NotFoundException("Пользователя не существует");
         }
 
-        validateUser(user);
+        ValidationUtils.validateUser(user);
         User existingUser = users.get(user.getId());
 
         // Обновляем только пришедшие поля
@@ -80,31 +81,5 @@ public class UserContoller {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
-    }
-
-    //Валидация user
-    private void validateUser(User user) {
-        if (user == null) {
-            logger.error("Запрос с пустым телом");
-            throw new ValidationException("Тело запроса не может быть пустым");
-        }
-
-        // Валидация email
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            logger.error("Некорректный email: {}", user.getEmail());
-            throw new ValidationException("Email обязателен и должен содержать @");
-        }
-
-        // Валидация логина
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            logger.error("Некорректный логин: {}", user.getLogin());
-            throw new ValidationException("Логин не может быть пустым или содержать пробелы");
-        }
-
-        // Валидация даты рождения
-        if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
-            logger.error("Некорректная дата рождения: {}", user.getBirthday());
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
     }
 }
