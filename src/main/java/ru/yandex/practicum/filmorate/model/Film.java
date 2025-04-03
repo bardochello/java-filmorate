@@ -9,7 +9,7 @@ import java.time.LocalDate;
  */
 @Data
 public class Film {
-    private Long id; // Id фильма
+    private Integer id; // Id фильма
     private String name; // Название фильма
     private String description; // Описание фильма
     private LocalDate releaseDate; // Дата релиза

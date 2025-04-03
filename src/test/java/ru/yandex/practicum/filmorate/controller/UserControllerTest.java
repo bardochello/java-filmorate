@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class UserControllerTest {
     @Autowired
-    private UserContoller userController;
+    private UserController userController;
 
     @Test
     public void testCreateUserWithEmptyEmail() {
@@ -24,6 +24,27 @@ public class UserControllerTest {
 
         assertThrows(ValidationException.class, () -> userController.create(user),
                 "Ожидается исключение для пустого email");
+    }
+
+    @Test
+    public void testUpdateUserSuccessfully() {
+        User initialUser = new User();
+        initialUser.setEmail("initial@example.com");
+        initialUser.setLogin("initialLogin");
+        initialUser.setName("Initial User");
+        initialUser.setBirthday(LocalDate.of(2000, 1, 1));
+        User createdUser = userController.create(initialUser);
+
+        User updatedUser = new User();
+        updatedUser.setId(createdUser.getId());
+        updatedUser.setEmail("updated@example.com");
+        updatedUser.setLogin("updatedLogin");
+        updatedUser.setName("Updated User");
+
+        User result = userController.updateUser(updatedUser);
+        assertEquals("updated@example.com", result.getEmail(), "Email должен обновиться");
+        assertEquals("updatedLogin", result.getLogin(), "Логин должен обновиться");
+        assertEquals("Updated User", result.getName(), "Имя должно обновиться");
     }
 
     @Test

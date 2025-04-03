@@ -29,6 +29,25 @@ public class FilmControllerTest {
     }
 
     @Test
+    public void testUpdateFilmSuccessfully() {
+        Film initialFilm = new Film();
+        initialFilm.setName("Initial Film");
+        initialFilm.setDescription("Initial Description");
+        initialFilm.setReleaseDate(LocalDate.of(2000, 1, 1));
+        initialFilm.setDuration(120);
+        Film createdFilm = filmController.create(initialFilm);
+
+        Film updatedFilm = new Film();
+        updatedFilm.setId(createdFilm.getId());
+        updatedFilm.setName("Updated Film");
+        updatedFilm.setDescription("Updated Description");
+
+        Film result = filmController.update(updatedFilm);
+        assertEquals("Updated Film", result.getName(), "Имя фильма должно обновиться");
+        assertEquals("Updated Description", result.getDescription(), "Описание фильма должно обновиться");
+    }
+
+    @Test
     public void testCreateFilmWithLongDescription() {
         Film film = new Film();
         film.setName("Name");
