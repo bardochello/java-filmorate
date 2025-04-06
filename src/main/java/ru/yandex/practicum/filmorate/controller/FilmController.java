@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.utils.ValidationUtils;
 
@@ -40,29 +39,11 @@ public class FilmController {
     public Film update(@RequestBody Film film) {
         ValidationUtils.validateFilmUpdate(film, films);
         Film existingFilm = films.get(film.getId());
-        boolean isUpdated = false;
 
-        if (film.getName() != null) {
-            existingFilm.setName(film.getName());
-            isUpdated = true;
-        }
-        if (film.getDescription() != null) {
-            existingFilm.setDescription(film.getDescription());
-            isUpdated = true;
-        }
-        if (film.getReleaseDate() != null) {
-            existingFilm.setReleaseDate(film.getReleaseDate());
-            isUpdated = true;
-        }
-        if (film.getDuration() != 0) {
-            existingFilm.setDuration(film.getDuration());
-            isUpdated = true;
-        }
-
-        if (!isUpdated) {
-            logger.warn("Нет данных для обновления");
-            throw new ValidationException("Не передано ни одного поля для обновления");
-        }
+        existingFilm.setName(film.getName());
+        existingFilm.setDescription(film.getDescription());
+        existingFilm.setReleaseDate(film.getReleaseDate());
+        existingFilm.setDuration(film.getDuration());
 
         films.put(existingFilm.getId(), existingFilm);
         logger.info("Обновлен фильм: {}", existingFilm);

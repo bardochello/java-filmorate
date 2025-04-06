@@ -25,8 +25,9 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
         ValidationUtils.validateUser(user); // Валидация пользователя
+        // Устанавливаем имя равным логину только если name не указано или пустое
         if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin()); // Установка имени, если оно пустое
+            user.setName(user.getLogin());
         }
         user.setId(getNextId()); // Установка id
         users.put(user.getId(), user); // Сохранение пользователя в хранилище
@@ -40,20 +41,10 @@ public class UserController {
         ValidationUtils.validateUserUpdate(user, users);
         User existingUser = users.get(user.getId());
 
-        if (user.getEmail() != null) {
-            existingUser.setEmail(user.getEmail());
-        }
-        if (user.getLogin() != null) {
-            existingUser.setLogin(user.getLogin());
-        }
-        if (user.getBirthday() != null) {
-            existingUser.setBirthday(user.getBirthday());
-        }
-        if (user.getName() != null) {
-            existingUser.setName(
-                    user.getName().isBlank() ? user.getLogin() : user.getName()
-            );
-        }
+        existingUser.setEmail(user.getEmail());
+        existingUser.setLogin(user.getLogin());
+        existingUser.setBirthday(user.getBirthday());
+        existingUser.setName(user.getName().isBlank() ? user.getLogin() : user.getName());
 
         logger.info("Обновлен пользователь: {}", existingUser);
         return existingUser;
