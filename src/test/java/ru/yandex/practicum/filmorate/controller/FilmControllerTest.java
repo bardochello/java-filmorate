@@ -41,6 +41,8 @@ public class FilmControllerTest {
         updatedFilm.setId(createdFilm.getId());
         updatedFilm.setName("Updated Film");
         updatedFilm.setDescription("Updated Description");
+        updatedFilm.setReleaseDate(createdFilm.getReleaseDate()); // Сохраняем исходную дату
+        updatedFilm.setDuration(createdFilm.getDuration());      // Сохраняем исходную продолжительность
 
         Film result = filmController.update(updatedFilm);
         assertEquals("Updated Film", result.getName(), "Имя фильма должно обновиться");
