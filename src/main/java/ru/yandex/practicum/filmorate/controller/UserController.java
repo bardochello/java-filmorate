@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.utils.ValidationUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,51 +15,84 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>(); // Хранилище пользователей в памяти
-    private final Logger logger = LoggerFactory.getLogger(UserController.class); // Логгер для класса
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final UserStorage userStorage;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserStorage userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     // Получение всех пользователей
     @GetMapping
     public Collection<User> findAll() {
-        return users.values();
+        logger.info("Получен запрос на получение всех пользователей");
+        return userStorage.findAll();
     }
 
     // Создание нового пользователя
     @PostMapping
     public User create(@RequestBody User user) {
-        ValidationUtils.validateUser(user); // Валидация пользователя
-        // Устанавливаем имя равным логину только если name не указано или пустое
+        ValidationUtils.validateUser(user);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        user.setId(getNextId()); // Установка id
-        users.put(user.getId(), user); // Сохранение пользователя в хранилище
-        logger.info("Создан пользователь с id: {}", user.getId());
-        return user;
+        User createdUser = userStorage.create(user);
+        logger.info("Создан пользователь с ID: {}", createdUser.getId());
+        return createdUser;
     }
 
     // Обновление существующего пользователя
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        ValidationUtils.validateUserUpdate(user, users);
-        User existingUser = users.get(user.getId());
-
+        ValidationUtils.validateUserUpdate(user, userStorage);
+        User existingUser = userStorage.findById(user.getId());
         existingUser.setEmail(user.getEmail());
         existingUser.setLogin(user.getLogin());
         existingUser.setBirthday(user.getBirthday());
-        existingUser.setName(user.getName().isBlank() ? user.getLogin() : user.getName());
-
-        logger.info("Обновлен пользователь: {}", existingUser);
-        return existingUser;
+        String newName = user.getName();
+        if (newName == null || newName.isBlank()) {
+            existingUser.setName(user.getLogin());
+        } else {
+            existingUser.setName(newName);
+        }
+        User updatedUser = userStorage.update(existingUser);
+        logger.info("Обновлен пользователь с ID: {}", updatedUser.getId());
+        return updatedUser;
     }
 
-    // Генерируем уникальный id для film
-    private int getNextId() {
-        int currentMaxId = users.keySet() //текущий максимальный ID из films или 0, если коллекция пустая
-                .stream()
-                .mapToInt(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @GetMapping("/{id}")
+    public User findById(@PathVariable int id) {
+        User user = userStorage.findById(id);
+        logger.info("Получен пользователь с ID: {}", id);
+        return user;
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.addFriend(id, friendId);
+        logger.info("Пользователь с ID {} добавил в друзья пользователя с ID {}", id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.removeFriend(id, friendId);
+        logger.info("Пользователь с ID {} удалил из друзей пользователя с ID {}", id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriends(@PathVariable int id) {
+        Collection<User> friends = userService.getFriends(id);
+        logger.info("Получен список друзей пользователя с ID {}", id);
+        return friends;
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        Collection<User> commonFriends = userService.getCommonFriends(id, otherId);
+        logger.info("Получен список общих друзей пользователей с ID {} и {}", id, otherId);
+        return commonFriends;
     }
 }
