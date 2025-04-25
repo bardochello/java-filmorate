@@ -15,12 +15,10 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController {
     private static final Logger logger = LoggerFactory.getLogger(FilmController.class); // Логгер для класса
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
@@ -28,14 +26,13 @@ public class FilmController {
     @GetMapping
     public Collection<Film> findAll() {
         logger.info("Получен запрос на получение всех фильмов");
-        return filmStorage.findAll();
+        return filmService.findAll();
     }
 
     // Создание фильма
     @PostMapping
     public Film create(@RequestBody Film film) {
-        ValidationUtils.validateFilm(film);
-        Film createdFilm = filmStorage.create(film);
+        Film createdFilm = filmService.create(film);
         logger.info("Создан фильм с ID: {}", createdFilm.getId());
         return createdFilm;
     }
@@ -43,8 +40,7 @@ public class FilmController {
     // Обновление существующего фильма
     @PutMapping
     public Film update(@RequestBody Film film) {
-        ValidationUtils.validateFilmUpdate(film, filmStorage);
-        Film updatedFilm = filmStorage.update(film);
+        Film updatedFilm = filmService.update(film);
         logger.info("Обновлен фильм с ID: {}", updatedFilm.getId());
         return updatedFilm;
     }
@@ -52,7 +48,7 @@ public class FilmController {
     //Поиск фильма по id
     @GetMapping("/{id}")
     public Film findById(@PathVariable int id) {
-        Film film = filmStorage.findById(id);
+        Film film = filmService.findById(id);
         logger.info("Получен фильм с ID: {}", id);
         return film;
     }
