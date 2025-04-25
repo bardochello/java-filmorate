@@ -49,6 +49,7 @@ public class FilmController {
         return updatedFilm;
     }
 
+    //Поиск фильма по id
     @GetMapping("/{id}")
     public Film findById(@PathVariable int id) {
         Film film = filmStorage.findById(id);
@@ -56,18 +57,21 @@ public class FilmController {
         return film;
     }
 
+    // Поставить лайк на фильм по id от пользователя по userId
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmService.addLike(id, userId);
         logger.info("Пользователь с ID {} поставил лайк фильму с ID {}", userId, id);
     }
 
+    // Удалить лайк на фильм по id от пользователя по userId
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable int id, @PathVariable int userId) {
         filmService.removeLike(id, userId);
         logger.info("Пользователь с ID {} удалил лайк с фильма с ID {}", userId, id);
     }
 
+    // Сортировка фильмов по кол-ву лайков (популярности)
     @GetMapping("/popular")
     public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         Collection<Film> popularFilms = filmService.getPopularFilms(count);

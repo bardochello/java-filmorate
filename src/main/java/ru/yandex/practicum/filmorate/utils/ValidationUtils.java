@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class ValidationUtils {
     private static final int MAX_DESCRIPTION_LENGTH = 200;

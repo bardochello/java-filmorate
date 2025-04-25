@@ -10,8 +10,8 @@ import java.util.Map;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int nextId = 1;
+    private final Map<Integer, Film> films = new HashMap<>(); // Хранилище фильмов
+    private int nextId = 1; // Id фильма
 
     @Override
     public Collection<Film> findAll() {
