@@ -38,6 +38,9 @@ public class FilmService {
 
     public Film create(Film film) {
         validate(film);
+        if (film.getMpa() != null && mpaService.findById(film.getMpa().getId()) == null) {
+            throw new NotFoundException("MPA не найден");
+        }
         setMpaAndGenres(film);
         return filmStorage.create(film);
     }

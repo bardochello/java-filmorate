@@ -47,10 +47,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public Map<String, Integer> addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
         logger.info("Пользователь {} добавляет в друзья {}", id, friendId);
         userService.addFriend(id, friendId);
-        return Map.of("id", id); // Возвращаем только id в формате Map
+        return userService.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
     @PutMapping("/{id}/friends/{friendId}/confirm")

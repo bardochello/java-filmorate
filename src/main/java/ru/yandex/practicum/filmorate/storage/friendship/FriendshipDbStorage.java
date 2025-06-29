@@ -22,7 +22,6 @@ public class FriendshipDbStorage implements FriendshipStorage {
         jdbcTemplate.update(sql, userId, friendId);
     }
 
-    @Override
     public void addConfirmedFriend(int userId, int friendId) {
         String sql = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, 'confirmed')";
         jdbcTemplate.update(sql, userId, friendId);
@@ -46,9 +45,8 @@ public class FriendshipDbStorage implements FriendshipStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        String sql = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, 'confirmed')";
         jdbcTemplate.update(sql, userId, friendId);
-        jdbcTemplate.update(sql, friendId, userId); // Добавляем взаимную дружбу
     }
 
     @Override
@@ -63,6 +61,4 @@ public class FriendshipDbStorage implements FriendshipStorage {
         String sql = "SELECT friend_id FROM friends WHERE user_id = ? AND status = 'confirmed'";
         return jdbcTemplate.queryForList(sql, Integer.class, userId);
     }
-
-
 }

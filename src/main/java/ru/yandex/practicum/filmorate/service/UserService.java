@@ -49,9 +49,11 @@ public class UserService {
 
     public void addFriend(int userId, int friendId) {
         if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("User not found");
         }
+
         friendshipStorage.addFriend(userId, friendId);
+        friendshipStorage.addFriend(friendId, userId); // Ensure mutual friendship
     }
 
     public void confirmFriend(int userId, int friendId) {
