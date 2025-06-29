@@ -45,6 +45,13 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
+    public void addFriend(int userId, int friendId) {
+        String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, userId, friendId);
+        jdbcTemplate.update(sql, friendId, userId); // Добавляем взаимную дружбу
+    }
+
+    @Override
     public void removeFriend(int userId, int friendId) {
         String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sql, userId, friendId);

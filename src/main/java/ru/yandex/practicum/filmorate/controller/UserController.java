@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -46,11 +47,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public Map<String, Integer> addFriend(@PathVariable int id, @PathVariable int friendId) {
         logger.info("Пользователь {} добавляет в друзья {}", id, friendId);
         userService.addFriend(id, friendId);
-        return userService.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + id + " не найден"));
+        return Map.of("id", id); // Возвращаем только id в формате Map
     }
 
     @PutMapping("/{id}/friends/{friendId}/confirm")

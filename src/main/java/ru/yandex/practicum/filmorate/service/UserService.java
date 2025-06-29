@@ -51,8 +51,7 @@ public class UserService {
         if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        friendshipStorage.addFriendRequest(userId, friendId);
-        friendshipStorage.addConfirmedFriend(friendId, userId);
+        friendshipStorage.addFriend(userId, friendId);
     }
 
     public void confirmFriend(int userId, int friendId) {
