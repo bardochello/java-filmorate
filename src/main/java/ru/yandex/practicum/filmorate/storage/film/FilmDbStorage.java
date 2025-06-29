@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Qualifier("filmDbStorage")
@@ -155,9 +156,12 @@ public class FilmDbStorage implements FilmStorage {
 
     private void saveGenres(Film film) {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            Set<Integer> genreIds = new HashSet<>(); // Множество для уникальных ID жанров
             for (Genre genre : film.getGenres()) {
-                String sql = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
-                jdbcTemplate.update(sql, film.getId(), genre.getId());
+                if (genreIds.add(genre.getId())) { // Добавляем только уникальные жанры
+                    String sql = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
+                    jdbcTemplate.update(sql, film.getId(), genre.getId());
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ public class UserService {
             throw new NotFoundException("Пользователь не найден");
         }
         friendshipStorage.addFriendRequest(userId, friendId);
+        friendshipStorage.addConfirmedFriend(friendId, userId);
     }
 
     public void confirmFriend(int userId, int friendId) {
@@ -65,6 +67,7 @@ public class UserService {
             throw new NotFoundException("Пользователь не найден");
         }
         friendshipStorage.removeFriend(userId, friendId);
+        friendshipStorage.removeFriend(userId, friendId);
     }
 
     public Collection<User> getFriends(int userId) {
@@ -74,6 +77,19 @@ public class UserService {
         return friendshipStorage.getFriends(userId).stream()
                 .map(id -> userStorage.findById(id).orElse(null))
                 .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<User> getCommonFriends(int userId, int otherId) {
+        if (userStorage.findById(userId).isEmpty() || userStorage.findById(otherId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        Collection<Integer> userFriends = friendshipStorage.getFriends(userId);
+        Collection<Integer> otherFriends = friendshipStorage.getFriends(otherId);
+        return userFriends.stream()
+                .filter(otherFriends::contains)
+                .map(id -> userStorage.findById(id).orElse(null))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

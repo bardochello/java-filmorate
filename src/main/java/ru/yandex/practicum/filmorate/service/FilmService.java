@@ -148,7 +148,7 @@ public class FilmService {
 
     private void setMpaAndGenres(Film film) {
         if (film.getMpa() != null) {
-            film.setMpa(mpaService.findById(film.getMpa().getId()));
+            film.setMpa(mpaService.findById(film.getMpa().getId())); // Бросает 404, если MPA не найден
         }
         if (film.getGenres() != null) {
             film.setGenres(film.getGenres().stream()

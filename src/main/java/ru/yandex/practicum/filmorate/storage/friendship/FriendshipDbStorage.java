@@ -23,6 +23,12 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
+    public void addConfirmedFriend(int userId, int friendId) {
+        String sql = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, 'confirmed')";
+        jdbcTemplate.update(sql, userId, friendId);
+    }
+
+    @Override
     public void confirmFriend(int userId, int friendId) {
         // Проверяем, есть ли запрос от friendId к userId
         String checkSql = "SELECT COUNT(*) FROM friends WHERE user_id = ? AND friend_id = ? AND status = 'pending'";
@@ -42,6 +48,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     public void removeFriend(int userId, int friendId) {
         String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sql, userId, friendId);
+        jdbcTemplate.update(sql, friendId, userId);
     }
 
     @Override
@@ -49,4 +56,6 @@ public class FriendshipDbStorage implements FriendshipStorage {
         String sql = "SELECT friend_id FROM friends WHERE user_id = ? AND status = 'confirmed'";
         return jdbcTemplate.queryForList(sql, Integer.class, userId);
     }
+
+
 }

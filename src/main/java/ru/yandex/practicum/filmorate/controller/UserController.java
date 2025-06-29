@@ -46,9 +46,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
         logger.info("Пользователь {} добавляет в друзья {}", id, friendId);
         userService.addFriend(id, friendId);
+        return userService.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + id + " не найден"));
     }
 
     @PutMapping("/{id}/friends/{friendId}/confirm")
@@ -67,5 +69,11 @@ public class UserController {
     public Collection<User> getFriends(@PathVariable int id) {
         logger.info("Получен запрос на список друзей пользователя {}", id);
         return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        logger.info("Получен запрос на общих друзей пользователей {} и {}", id, otherId);
+        return userService.getCommonFriends(id, otherId);
     }
 }

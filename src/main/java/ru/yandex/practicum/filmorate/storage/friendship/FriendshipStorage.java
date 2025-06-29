@@ -10,4 +10,6 @@ public interface FriendshipStorage {
     void removeFriend(int userId, int friendId);
 
     Collection<Integer> getFriends(int userId);
+
+    void addConfirmedFriend(int userId, int friendId);
 }
