@@ -38,8 +38,13 @@ public class FilmService {
 
     public Film create(Film film) {
         validate(film);
-        if (film.getMpa() != null && mpaService.findById(film.getMpa().getId()) == null) {
-            throw new NotFoundException("MPA не найден");
+
+        if (film.getMpa() != null) {
+            try {
+                mpaService.findById(film.getMpa().getId());
+            } catch (NotFoundException e) {
+                throw new NotFoundException("MPA не найден");
+            }
         }
         setMpaAndGenres(film);
         return filmStorage.create(film);
@@ -52,7 +57,6 @@ public class FilmService {
         if (existingFilm == null) {
             throw new NotFoundException("Фильм с ID " + film.getId() + " не найден");
         }
-        // Обновляем только указанные поля
         if (film.getName() != null) {
             existingFilm.setName(film.getName());
         }
@@ -151,7 +155,7 @@ public class FilmService {
 
     private void setMpaAndGenres(Film film) {
         if (film.getMpa() != null) {
-            film.setMpa(mpaService.findById(film.getMpa().getId())); // Бросает 404, если MPA не найден
+            film.setMpa(mpaService.findById(film.getMpa().getId())); // Throws 404 if MPA not found
         }
         if (film.getGenres() != null) {
             film.setGenres(film.getGenres().stream()

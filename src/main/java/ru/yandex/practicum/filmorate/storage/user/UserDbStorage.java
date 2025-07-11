@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @Component
 @Qualifier("userDbStorage")
 public class UserDbStorage implements UserStorage {
+    private static final Logger logger = LoggerFactory.getLogger(UserDbStorage.class);
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -40,10 +43,12 @@ public class UserDbStorage implements UserStorage {
             ps.setString(1, user.getEmail());
             ps.setString(2, user.getLogin());
             ps.setString(3, user.getName());
-            ps.setDate(4, user.getBirthday() != null ? Date.valueOf(user.getBirthday()) : null);
+            ps.setDate(4, Date.valueOf(user.getBirthday()));
             return ps;
         }, keyHolder);
-        user.setId(keyHolder.getKey().intValue());
+        int id = keyHolder.getKey().intValue();
+        user.setId(id);
+        logger.info("Пользователь создан с id={}: {}", id, user);
         return user;
     }
 

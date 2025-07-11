@@ -52,12 +52,6 @@ public class UserController {
         return userService.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
-    @PutMapping("/{id}/friends/{friendId}/confirm")
-    public void confirmFriend(@PathVariable int id, @PathVariable int friendId) {
-        logger.info("Пользователь {} подтверждает дружбу с {}", id, friendId);
-        userService.confirmFriend(id, friendId);
-    }
-
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable int id, @PathVariable int friendId) {
         logger.info("Пользователь {} удаляет из друзей {}", id, friendId);

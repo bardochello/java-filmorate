@@ -51,23 +51,14 @@ public class UserService {
         if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
             throw new NotFoundException("User not found");
         }
-
+        // Just add friend request from userId to friendId (not mutual)
         friendshipStorage.addFriend(userId, friendId);
-        friendshipStorage.addFriend(friendId, userId); // Ensure mutual friendship
-    }
-
-    public void confirmFriend(int userId, int friendId) {
-        if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-        friendshipStorage.confirmFriend(userId, friendId);
     }
 
     public void removeFriend(int userId, int friendId) {
         if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        friendshipStorage.removeFriend(userId, friendId);
         friendshipStorage.removeFriend(userId, friendId);
     }
 
