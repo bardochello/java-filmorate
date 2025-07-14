@@ -40,7 +40,9 @@ class FilmDbStorageTest {
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
-        film.setMpa(new Mpa(1, "G"));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        film.setMpa(mpa);
 
         Film createdFilm = filmStorage.create(film);
 
@@ -58,7 +60,9 @@ class FilmDbStorageTest {
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
-        film.setMpa(new Mpa(1, "G"));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        film.setMpa(mpa);
         Film createdFilm = filmStorage.create(film);
 
         Film foundFilm = filmStorage.findById(createdFilm.getId());
@@ -77,7 +81,9 @@ class FilmDbStorageTest {
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
-        film.setMpa(new Mpa(1, "G"));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        film.setMpa(mpa);
         Film createdFilm = filmStorage.create(film);
 
         createdFilm.setName("Updated Film");
@@ -100,7 +106,9 @@ class FilmDbStorageTest {
         film1.setDescription("Description 1");
         film1.setReleaseDate(LocalDate.of(2000, 1, 1));
         film1.setDuration(120);
-        film1.setMpa(new Mpa(1, "G"));
+        Mpa mpa1 = new Mpa();
+        mpa1.setId(1);
+        film1.setMpa(mpa1);
         filmStorage.create(film1);
 
         Film film2 = new Film();
@@ -108,7 +116,9 @@ class FilmDbStorageTest {
         film2.setDescription("Description 2");
         film2.setReleaseDate(LocalDate.of(2000, 1, 2));
         film2.setDuration(150);
-        film2.setMpa(new Mpa(1, "G"));
+        Mpa mpa2 = new Mpa();
+        mpa2.setId(1);
+        film2.setMpa(mpa2);
         filmStorage.create(film2);
 
         Collection<Film> films = filmStorage.findAll();
@@ -127,7 +137,9 @@ class FilmDbStorageTest {
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
-        film.setMpa(new Mpa(1, "G"));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        film.setMpa(mpa);
         Film createdFilm = filmStorage.create(film);
 
         filmStorage.delete(createdFilm.getId());

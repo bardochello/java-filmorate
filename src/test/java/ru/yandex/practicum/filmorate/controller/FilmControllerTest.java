@@ -24,7 +24,10 @@ class FilmControllerTest {
         initialFilm.setDescription("Initial Description");
         initialFilm.setReleaseDate(LocalDate.of(2000, 1, 1));
         initialFilm.setDuration(120);
-        initialFilm.setMpa(new Mpa(1, "G"));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        initialFilm.setMpa(mpa);
+
         Film createdFilm = filmController.create(initialFilm);
 
         Film updatedFilm = new Film();
