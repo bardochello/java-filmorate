@@ -51,7 +51,7 @@ public class UserService {
         if (userStorage.findById(userId).isEmpty() || userStorage.findById(friendId).isEmpty()) {
             throw new NotFoundException("User not found");
         }
-        // Just add friend request from userId to friendId (not mutual)
+
         friendshipStorage.addFriend(userId, friendId);
     }
 
