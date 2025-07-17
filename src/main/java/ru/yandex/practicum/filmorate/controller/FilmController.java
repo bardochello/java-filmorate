@@ -12,7 +12,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static final Logger logger = LoggerFactory.getLogger(FilmController.class); // Логгер для класса
+    private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
     private final FilmService filmService;
 
     @Autowired
@@ -20,56 +20,45 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    // Получение всех фильмов
     @GetMapping
     public Collection<Film> findAll() {
         logger.info("Получен запрос на получение всех фильмов");
         return filmService.findAll();
     }
 
-    // Создание фильма
     @PostMapping
     public Film create(@RequestBody Film film) {
-        Film createdFilm = filmService.create(film);
-        logger.info("Создан фильм с ID: {}", createdFilm.getId());
-        return createdFilm;
+        logger.info("Создание фильма: {}", film.getName());
+        return filmService.create(film);
     }
 
-    // Обновление существующего фильма
     @PutMapping
     public Film update(@RequestBody Film film) {
-        Film updatedFilm = filmService.update(film);
-        logger.info("Обновлен фильм с ID: {}", updatedFilm.getId());
-        return updatedFilm;
+        logger.info("Обновление фильма с ID: {}", film.getId());
+        return filmService.update(film);
     }
 
-    //Поиск фильма по id
     @GetMapping("/{id}")
     public Film findById(@PathVariable int id) {
-        Film film = filmService.findById(id);
-        logger.info("Получен фильм с ID: {}", id);
-        return film;
+        logger.info("Получен запрос на фильм с ID: {}", id);
+        return filmService.findById(id);
     }
 
-    // Поставить лайк на фильм по id от пользователя по userId
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
+        logger.info("Пользователь {} ставит лайк фильму {}", userId, id);
         filmService.addLike(id, userId);
-        logger.info("Пользователь с ID {} поставил лайк фильму с ID {}", userId, id);
     }
 
-    // Удалить лайк на фильм по id от пользователя по userId
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable int id, @PathVariable int userId) {
+        logger.info("Пользователь {} удаляет лайк с фильма {}", userId, id);
         filmService.removeLike(id, userId);
-        logger.info("Пользователь с ID {} удалил лайк с фильма с ID {}", userId, id);
     }
 
-    // Сортировка фильмов по кол-ву лайков (популярности)
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        Collection<Film> popularFilms = filmService.getPopularFilms(count);
-        logger.info("Получен список {} популярных фильмов", count);
-        return popularFilms;
+    public Collection<Film> getPopular(@RequestParam(defaultValue = "10") int count) {
+        logger.info("Получен запрос на {} популярных фильмов", count);
+        return filmService.getPopular(count);
     }
 }
